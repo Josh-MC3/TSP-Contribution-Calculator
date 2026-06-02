@@ -15,6 +15,8 @@
             --border: #e2e8f0;
             --warning: #dc2626;
             --success: #16a34a;
+            --highlight-bg: #f0fdf4;
+            --highlight-border: #bbf7d0;
         }
 
         * {
@@ -157,6 +159,26 @@
             transition: color 0.2s;
         }
 
+        .strategy-box {
+            background-color: var(--highlight-bg);
+            border: 1px solid var(--highlight-border);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .strategy-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #166534;
+        }
+
+        .strategy-subtext {
+            font-size: 0.85rem;
+            color: #15803d;
+            margin-top: 0.25rem;
+        }
+
         .warning-msg {
             display: none;
             background-color: #fef2f2;
@@ -186,14 +208,12 @@
         <p>Estimate elective deferral metrics based on DFAS Active Duty Pay Charts</p>
     </header>
 
-    <!-- Section 1: Base Pay Selection -->
     <div class="card">
         <div class="card-title">1. Base Pay Information</div>
         <div class="grid">
             <div class="form-group">
                 <label for="paygrade">Paygrade</label>
                 <select id="paygrade">
-                    <!-- Enlisted -->
                     <option value="E-1">E-1</option>
                     <option value="E-2">E-2</option>
                     <option value="E-3" selected>E-3</option>
@@ -203,7 +223,6 @@
                     <option value="E-7">E-7</option>
                     <option value="E-8">E-8</option>
                     <option value="E-9">E-9</option>
-                    <!-- Officers -->
                     <option value="O-1">O-1</option>
                     <option value="O-2">O-2</option>
                     <option value="O-3">O-3</option>
@@ -243,7 +262,6 @@
         </div>
     </div>
 
-    <!-- Section 2: TSP Allocation Calculations -->
     <div class="card">
         <div class="card-title">2. Monthly TSP Contributions</div>
         <div class="grid" style="margin-bottom: 1.25rem;">
@@ -269,7 +287,6 @@
         </div>
     </div>
 
-    <!-- Section 3: Annual Projection Tracker -->
     <div class="card">
         <div class="card-title">3. Yearly Contribution Target Progress</div>
         <div class="fraction-output" id="annual-fraction-output">
@@ -277,6 +294,14 @@
         </div>
         <div class="warning-msg" id="warning-box">
             ⚠️ Warning: Over Contribution Detected!
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">4. How to Max Out ($23,500 Goal)</div>
+        <div class="strategy-box">
+            <div id="strategy-output" class="strategy-text">Calculating target allocation...</div>
+            <div id="strategy-subtext" class="strategy-subtext">Projected values based on full calendar year.</div>
         </div>
     </div>
 </div>
@@ -314,17 +339,17 @@
     const mainMonthlyDollarOutput = document.getElementById('main-monthly-dollar');
     const annualFractionOutput = document.getElementById('annual-fraction-output');
     const warningBox = document.getElementById('warning-box');
+    const strategyOutput = document.getElementById('strategy-output');
+    const strategySubtext = document.getElementById('strategy-subtext');
 
     // Initialize Dropdowns to baseline absolute caps
     function initDropdowns() {
-        // Traditional absolute baseline cap is 92%
         for (let i = 0; i <= 92; i++) {
             const opt = document.createElement('option');
             opt.value = i;
             opt.textContent = `${i}%`;
             tradPctSelect.appendChild(opt);
         }
-        // Roth absolute baseline cap is 60%
         for (let i = 0; i <= 60; i++) {
             const opt = document.createElement('option');
             opt.value = i;
@@ -332,7 +357,6 @@
             rothPctSelect.appendChild(opt);
         }
         
-        // Default initial distribution
         tradPctSelect.value = "5";
         rothPctSelect.value = "0";
     }
@@ -343,26 +367,18 @@
         const currentRoth = parseInt(rothPctSelect.value) || 0;
 
         if (triggeredBy === 'roth') {
-            // Roth dictates Traditional limit: 92% - (Roth * 1.5)
             const allowedTradMax = Math.max(0, Math.floor(92 - (currentRoth * 1.5)));
-            
             Array.from(tradPctSelect.options).forEach(opt => {
-                const val = parseInt(opt.value);
-                opt.disabled = val > allowedTradMax;
+                opt.disabled = parseInt(opt.value) > allowedTradMax;
             });
-
             if (currentTrad > allowedTradMax) {
                 tradPctSelect.value = allowedTradMax;
             }
         } else {
-            // Traditional dictates Roth limit: 60% - (Traditional / 1.5)
             const allowedRothMax = Math.max(0, Math.floor(60 - (currentTrad / 1.5)));
-
             Array.from(rothPctSelect.options).forEach(opt => {
-                const val = parseInt(opt.value);
-                opt.disabled = val > allowedRothMax;
+                opt.disabled = parseInt(opt.value) > allowedRothMax;
             });
-
             if (currentRoth > allowedRothMax) {
                 rothPctSelect.value = allowedRothMax;
             }
@@ -392,7 +408,7 @@
         monthlyBaseOutput.textContent = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(monthlyBasePay);
         annualBaseOutput.textContent = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(annualBasePay);
 
-        // Blended Retirement System (BRS) Matching Configuration (1% baseline up to 5% max tiering)
+        // Blended Retirement System (BRS) Matching Configuration
         const totalPersonalPct = tradPct + rothPct;
         let matchPct = 1; 
         if (totalPersonalPct >= 5) {
@@ -420,6 +436,37 @@
         } else {
             warningBox.style.display = 'none';
             annualFractionOutput.style.color = '#334155';
+        }
+
+        // Section 4: Target Max-Out Strategy Calculations
+        calculateMaxOutStrategy(monthlyBasePay);
+    }
+
+    // Strategy engine looking at necessary metrics to hit target limit safely
+    function calculateMaxOutStrategy(monthlyBasePay) {
+        if (monthlyBasePay === 0) {
+            strategyOutput.textContent = "Please select a valid paygrade.";
+            return;
+        }
+
+        const targetMonthlySpend = IRS_LIMIT / 12; // $1,958.33
+        
+        // Exact mathematical percentage required, rounded down to nearest integer to avoid over-contribution
+        const requiredPct = Math.floor((targetMonthlySpend / monthlyBasePay) * 100);
+
+        // Determine limits based on structural constraints
+        if (requiredPct > 92) {
+            strategyOutput.innerHTML = `Contribute <span style="color:var(--warning)">92%</span> (Traditional Max Base Allocation)`;
+            strategySubtext.textContent = `Note: At your current paygrade, your maximum base allocation limits you to a max yearly savings of ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(monthlyBasePay * 0.92 * 12)}.`;
+        } else if (requiredPct <= 60) {
+            const projectedTotal = (monthlyBasePay * (requiredPct / 100)) * 12;
+            strategyOutput.innerHTML = `Contribute <span style="color:var(--primary)">${requiredPct}%</span> to either Traditional or Roth`;
+            strategySubtext.textContent = `This will contribute ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(projectedTotal)} / $23,500 annually without going over.`;
+        } else {
+            // Value is between 61% and 92% (allowed for Traditional, but breaks standalone Roth caps)
+            const projectedTotal = (monthlyBasePay * (requiredPct / 100)) * 12;
+            strategyOutput.innerHTML = `Contribute <span style="color:var(--primary)">${requiredPct}%</span> to Traditional`;
+            strategySubtext.textContent = `This will contribute ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(projectedTotal)} / $23,500 annually. (Exceeds standalone Roth 60% limit).`;
         }
     }
 
