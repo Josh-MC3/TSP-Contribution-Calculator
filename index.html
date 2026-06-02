@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Military TSP Contribution Calculator</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-hover: #172554;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --warning: #dc2626;
+            --success: #16a34a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 2rem 1rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            color: var(--primary);
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 1.75rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            color: var(--primary);
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+        }
+
+        @media (max-width: 480px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 0.65rem 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+            background-color: #fff;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        select:focus, input:focus {
+            border-color: var(--primary);
+        }
+
+        select:disabled, option:disabled {
+            color: #cbd5e1;
+            background-color: #f8fafc;
+        }
+
+        input:disabled {
+            background-color: #f1f5f9;
+            color: #475569;
+            cursor: not-allowed;
+        }
+
+        .output-box {
+            background-color: #f1f5f9;
+            border-left: 4px solid var(--primary);
+            padding: 0.75rem;
+            border-radius: 0 6px 6px 0;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            min-height: 44px;
+        }
+
+        .main-output-container {
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        .main-output-val {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-top: 0.25rem;
+        }
+
+        .fraction-output {
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+            margin-top: 0.5rem;
+            color: #334155;
+            transition: color 0.2s;
+        }
+
+        .warning-msg {
+            display: none;
+            background-color: #fef2f2;
+            color: var(--warning);
+            border: 1px solid #fca5a5;
+            padding: 0.75rem;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 600;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Military TSP Calculator</h1>
+        <p>Estimate elective deferral metrics based on DFAS Active Duty Pay Charts</p>
+    </header>
+
+    <!-- Section 1: Base Pay Selection -->
+    <div class="card">
+        <div class="card-title">1. Base Pay Information</div>
+        <div class="grid">
+            <div class="form-group">
+                <label for="paygrade">Paygrade</label>
+                <select id="paygrade">
+                    <!-- Enlisted -->
+                    <option value="E-1">E-1</option>
+                    <option value="E-2">E-2</option>
+                    <option value="E-3" selected>E-3</option>
+                    <option value="E-4">E-4</option>
+                    <option value="E-5">E-5</option>
+                    <option value="E-6">E-6</option>
+                    <option value="E-7">E-7</option>
+                    <option value="E-8">E-8</option>
+                    <option value="E-9">E-9</option>
+                    <!-- Officers -->
+                    <option value="O-1">O-1</option>
+                    <option value="O-2">O-2</option>
+                    <option value="O-3">O-3</option>
+                    <option value="O-4">O-4</option>
+                    <option value="O-5">O-5</option>
+                    <option value="O-6">O-6</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="yos">Years of Service</label>
+                <select id="yos">
+                    <option value="2_or_less">2 or less</option>
+                    <option value="over_2">Over 2</option>
+                    <option value="over_3">Over 3</option>
+                    <option value="over_4">Over 4</option>
+                    <option value="over_6">Over 6</option>
+                    <option value="over_8">Over 8</option>
+                    <option value="over_10">Over 10</option>
+                    <option value="over_12">Over 12</option>
+                    <option value="over_14">Over 14</option>
+                    <option value="over_16">Over 16</option>
+                    <option value="over_18">Over 18</option>
+                    <option value="over_20">Over 20</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Base Pay Monthly</label>
+                <div id="monthly-base-output" class="output-box">$0.00</div>
+            </div>
+
+            <div class="form-group">
+                <label>Base Pay Annual</label>
+                <div id="annual-base-output" class="output-box">$0.00</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2: TSP Allocation Calculations -->
+    <div class="card">
+        <div class="card-title">2. Monthly TSP Contributions</div>
+        <div class="grid" style="margin-bottom: 1.25rem;">
+            <div class="form-group">
+                <label for="trad-pct">Traditional TSP (%)</label>
+                <select id="trad-pct"></select>
+            </div>
+
+            <div class="form-group">
+                <label for="roth-pct">Roth TSP (%)</label>
+                <select id="roth-pct"></select>
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label for="match-pct">Contribution Match (Non-selectable)</label>
+            <input type="text" id="match-pct" disabled value="1%">
+        </div>
+
+        <div class="main-output-container">
+            <label>Total Personal Monthly Contribution</label>
+            <div id="main-monthly-dollar" class="main-output-val">$0.00</div>
+        </div>
+    </div>
+
+    <!-- Section 3: Annual Projection Tracker -->
+    <div class="card">
+        <div class="card-title">3. Yearly Contribution Target Progress</div>
+        <div class="fraction-output" id="annual-fraction-output">
+            $0 / $23,500
+        </div>
+        <div class="warning-msg" id="warning-box">
+            ⚠️ Warning: Over Contribution Detected!
+        </div>
+    </div>
+</div>
+
+<script>
+    // Embedded Active Duty Pay Table Dataset (Monthly Values based on DFAS benchmarks)
+    const payTable = {
+        "E-1": { "2_or_less": 2407.20, "default": 2407.20 },
+        "E-2": { "default": 2698.50 },
+        "E-3": { "2_or_less": 2838.20, "over_2": 3014.10, "over_3": 3206.40, "default": 3206.40 },
+        "E-4": { "2_or_less": 3144.10, "over_2": 3305.20, "over_3": 3497.30, "over_4": 3684.60, "default": 3684.60 },
+        "E-5": { "2_or_less": 3428.40, "over_2": 3659.10, "over_3": 3848.40, "over_4": 4041.20, "over_6": 4324.50, "default": 4324.50 },
+        "E-6": { "2_or_less": 3742.10, "over_2": 4118.30, "over_3": 4310.20, "over_4": 4496.50, "over_6": 4694.10, "over_8": 5108.30, "over_10": 5269.40, "default": 5269.40 },
+        "E-7": { "2_or_less": 4328.50, "over_2": 4725.20, "over_3": 4908.10, "over_4": 5142.30, "over_6": 5334.40, "over_8": 5658.20, "over_10": 5842.10, "over_12": 6155.30, "default": 6155.30 },
+        "E-8": { "2_or_less": 5449.50, "over_2": 5690.70, "over_3": 5839.80, "over_4": 6018.60, "over_6": 6212.10, "over_8": 6561.90, "over_10": 6739.20, "over_12": 7040.70, "over_14": 7207.80, "default": 7207.80 },
+        "E-9": { "2_or_less": 6657.30, "over_2": 6807.90, "over_3": 6997.80, "over_4": 7221.60, "over_6": 7447.80, "over_8": 7808.40, "over_10": 8114.70, "over_12": 8436.00, "default": 8436.00 },
+        "O-1": { "2_or_less": 4150.20, "over_2": 4320.00, "over_3": 5222.40, "default": 5222.40 },
+        "O-2": { "2_or_less": 4782.00, "over_2": 5446.20, "over_3": 6272.40, "over_4": 6484.50, "default": 6484.50 },
+        "O-3": { "2_or_less": 5534.10, "over_2": 6273.90, "over_3": 6770.40, "over_4": 7382.70, "over_6": 7737.00, "over_8": 8125.50, "over_10": 8375.70, "default": 8375.70 },
+        "O-4": { "2_or_less": 6294.60, "over_2": 7286.40, "over_3": 7773.60, "over_4": 7881.00, "over_6": 8332.20, "over_8": 8816.40, "over_10": 9420.00, "default": 9420.00 },
+        "O-5": { "2_or_less": 7295.40, "over_2": 8218.20, "over_3": 8787.00, "over_4": 8894.10, "over_6": 9249.60, "over_8": 9461.40, "over_10": 9928.50, "default": 9928.50 },
+        "O-6": { "2_or_less": 8751.30, "over_2": 9613.80, "over_3": 10245.00, "over_4": 10245.00, "over_6": 10284.30, "over_8": 10725.00, "over_10": 10783.50, "default": 10783.50 }
+    };
+
+    const IRS_LIMIT = 23500;
+
+    // DOM Elements
+    const paygradeSelect = document.getElementById('paygrade');
+    const yosSelect = document.getElementById('yos');
+    const monthlyBaseOutput = document.getElementById('monthly-base-output');
+    const annualBaseOutput = document.getElementById('annual-base-output');
+    const tradPctSelect = document.getElementById('trad-pct');
+    const rothPctSelect = document.getElementById('roth-pct');
+    const matchPctInput = document.getElementById('match-pct');
+    const mainMonthlyDollarOutput = document.getElementById('main-monthly-dollar');
+    const annualFractionOutput = document.getElementById('annual-fraction-output');
+    const warningBox = document.getElementById('warning-box');
+
+    // Initialize Dropdowns to baseline absolute caps
+    function initDropdowns() {
+        // Traditional absolute baseline cap is 92%
+        for (let i = 0; i <= 92; i++) {
+            const opt = document.createElement('option');
+            opt.value = i;
+            opt.textContent = `${i}%`;
+            tradPctSelect.appendChild(opt);
+        }
+        // Roth absolute baseline cap is 60%
+        for (let i = 0; i <= 60; i++) {
+            const opt = document.createElement('option');
+            opt.value = i;
+            opt.textContent = `${i}%`;
+            rothPctSelect.appendChild(opt);
+        }
+        
+        // Default initial distribution
+        tradPctSelect.value = "5";
+        rothPctSelect.value = "0";
+    }
+
+    // Dynamic 1.5:1 ratio constraint calculations
+    function updatePercentageBoundaries(triggeredBy) {
+        const currentTrad = parseInt(tradPctSelect.value) || 0;
+        const currentRoth = parseInt(rothPctSelect.value) || 0;
+
+        if (triggeredBy === 'roth') {
+            // Roth dictates Traditional limit: 92% - (Roth * 1.5)
+            const allowedTradMax = Math.max(0, Math.floor(92 - (currentRoth * 1.5)));
+            
+            Array.from(tradPctSelect.options).forEach(opt => {
+                const val = parseInt(opt.value);
+                opt.disabled = val > allowedTradMax;
+            });
+
+            if (currentTrad > allowedTradMax) {
+                tradPctSelect.value = allowedTradMax;
+            }
+        } else {
+            // Traditional dictates Roth limit: 60% - (Traditional / 1.5)
+            const allowedRothMax = Math.max(0, Math.floor(60 - (currentTrad / 1.5)));
+
+            Array.from(rothPctSelect.options).forEach(opt => {
+                const val = parseInt(opt.value);
+                opt.disabled = val > allowedRothMax;
+            });
+
+            if (currentRoth > allowedRothMax) {
+                rothPctSelect.value = allowedRothMax;
+            }
+        }
+    }
+
+    // Core Calculation Processing Engine
+    function calculateTSP() {
+        const paygrade = paygradeSelect.value;
+        const yos = yosSelect.value;
+        const tradPct = parseInt(tradPctSelect.value) || 0;
+        const rothPct = parseInt(rothPctSelect.value) || 0;
+
+        // Resolve Monthly Base Pay from matrix dataset
+        let monthlyBasePay = 0;
+        if (payTable[paygrade]) {
+            if (payTable[paygrade][yos] !== undefined) {
+                monthlyBasePay = payTable[paygrade][yos];
+            } else {
+                monthlyBasePay = payTable[paygrade]["default"];
+            }
+        }
+
+        const annualBasePay = monthlyBasePay * 12;
+
+        // Render Section 1 Metrics
+        monthlyBaseOutput.textContent = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(monthlyBasePay);
+        annualBaseOutput.textContent = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(annualBasePay);
+
+        // Blended Retirement System (BRS) Matching Configuration (1% baseline up to 5% max tiering)
+        const totalPersonalPct = tradPct + rothPct;
+        let matchPct = 1; 
+        if (totalPersonalPct >= 5) {
+            matchPct = 5;
+        } else if (totalPersonalPct > 0) {
+            matchPct = totalPersonalPct + 1; 
+        }
+        matchPctInput.value = `${matchPct}%`;
+
+        // Compute Out-of-Pocket Monthly Dollar Aggregations
+        const monthlyContributionDollar = (monthlyBasePay * (totalPersonalPct / 100));
+        mainMonthlyDollarOutput.textContent = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(monthlyContributionDollar);
+
+        // Compute Annual Tracking Matrix Fractions
+        const annualProjectedContribution = monthlyContributionDollar * 12;
+        const formattedAnnual = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(annualProjectedContribution);
+        const formattedLimit = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(IRS_LIMIT);
+        
+        annualFractionOutput.textContent = `${formattedAnnual} / ${formattedLimit}`;
+
+        // Validation Target Limit Safeguard Actions
+        if (annualProjectedContribution > IRS_LIMIT) {
+            warningBox.style.display = 'block';
+            annualFractionOutput.style.color = 'var(--warning)';
+        } else {
+            warningBox.style.display = 'none';
+            annualFractionOutput.style.color = '#334155';
+        }
+    }
+
+    // State Lifecycle Initialization Execution Loops
+    window.addEventListener('DOMContentLoaded', () => {
+        initDropdowns();
+        updatePercentageBoundaries('trad'); 
+        calculateTSP();
+
+        paygradeSelect.addEventListener('change', calculateTSP);
+        yosSelect.addEventListener('change', calculateTSP);
+        
+        tradPctSelect.addEventListener('change', () => {
+            updatePercentageBoundaries('trad');
+            calculateTSP();
+        });
+        
+        rothPctSelect.addEventListener('change', () => {
+            updatePercentageBoundaries('roth');
+            calculateTSP();
+        });
+    });
+</script>
+
+</body>
+</html>
