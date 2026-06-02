@@ -208,12 +208,14 @@
         <p>Estimate elective deferral metrics based on DFAS Active Duty Pay Charts</p>
     </header>
 
+    <!-- Section 1: Base Pay Selection -->
     <div class="card">
         <div class="card-title">1. Base Pay Information</div>
         <div class="grid">
             <div class="form-group">
                 <label for="paygrade">Paygrade</label>
                 <select id="paygrade">
+                    <!-- Enlisted -->
                     <option value="E-1">E-1</option>
                     <option value="E-2">E-2</option>
                     <option value="E-3" selected>E-3</option>
@@ -223,6 +225,7 @@
                     <option value="E-7">E-7</option>
                     <option value="E-8">E-8</option>
                     <option value="E-9">E-9</option>
+                    <!-- Officers -->
                     <option value="O-1">O-1</option>
                     <option value="O-2">O-2</option>
                     <option value="O-3">O-3</option>
@@ -262,8 +265,18 @@
         </div>
     </div>
 
+    <!-- Section 2: Max-Out Strategy Engine -->
     <div class="card">
-        <div class="card-title">2. Monthly TSP Contributions</div>
+        <div class="card-title">2. How to Max Out ($23,500 Goal)</div>
+        <div class="strategy-box">
+            <div id="strategy-output" class="strategy-text">Calculating target allocation...</div>
+            <div id="strategy-subtext" class="strategy-subtext">Projected values based on full calendar year.</div>
+        </div>
+    </div>
+
+    <!-- Section 3: TSP Allocation Calculations -->
+    <div class="card">
+        <div class="card-title">3. Monthly TSP Contributions</div>
         <div class="grid" style="margin-bottom: 1.25rem;">
             <div class="form-group">
                 <label for="trad-pct">Traditional TSP (%)</label>
@@ -287,21 +300,14 @@
         </div>
     </div>
 
+    <!-- Section 4: Annual Projection Tracker -->
     <div class="card">
-        <div class="card-title">3. Yearly Contribution Target Progress</div>
+        <div class="card-title">4. Yearly Contribution Target Progress</div>
         <div class="fraction-output" id="annual-fraction-output">
             $0 / $23,500
         </div>
         <div class="warning-msg" id="warning-box">
             ⚠️ Warning: Over Contribution Detected!
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-title">4. How to Max Out ($23,500 Goal)</div>
-        <div class="strategy-box">
-            <div id="strategy-output" class="strategy-text">Calculating target allocation...</div>
-            <div id="strategy-subtext" class="strategy-subtext">Projected values based on full calendar year.</div>
         </div>
     </div>
 </div>
@@ -438,7 +444,7 @@
             annualFractionOutput.style.color = '#334155';
         }
 
-        // Section 4: Target Max-Out Strategy Calculations
+        // Section 2: Target Max-Out Strategy Calculations
         calculateMaxOutStrategy(monthlyBasePay);
     }
 
