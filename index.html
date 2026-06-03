@@ -216,22 +216,40 @@
                 <label for="paygrade">Paygrade</label>
                 <select id="paygrade">
                     <!-- Enlisted -->
-                    <option value="E-1">E-1</option>
-                    <option value="E-2">E-2</option>
-                    <option value="E-3" selected>E-3</option>
-                    <option value="E-4">E-4</option>
-                    <option value="E-5">E-5</option>
-                    <option value="E-6">E-6</option>
-                    <option value="E-7">E-7</option>
-                    <option value="E-8">E-8</option>
-                    <option value="E-9">E-9</option>
-                    <!-- Officers -->
-                    <option value="O-1">O-1</option>
-                    <option value="O-2">O-2</option>
-                    <option value="O-3">O-3</option>
-                    <option value="O-4">O-4</option>
-                    <option value="O-5">O-5</option>
-                    <option value="O-6">O-6</option>
+                    <optgroup label="Enlisted">
+                        <option value="E-1">E-1</option>
+                        <option value="E-2">E-2</option>
+                        <option value="E-3" selected>E-3</option>
+                        <option value="E-4">E-4</option>
+                        <option value="E-5">E-5</option>
+                        <option value="E-6">E-6</option>
+                        <option value="E-7">E-7</option>
+                        <option value="E-8">E-8</option>
+                        <option value="E-9">E-9</option>
+                    </optgroup>
+                    <!-- Warrant Officers -->
+                    <optgroup label="Warrant Officers">
+                        <option value="W-1">W-1 (CWO1)</option>
+                        <option value="W-2">W-2 (CWO2)</option>
+                        <option value="W-3">W-3 (CWO3)</option>
+                        <option value="W-4">W-4 (CWO4)</option>
+                        <option value="W-5">W-5 (CWO5)</option>
+                    </optgroup>
+                    <!-- Prior Enlisted Officers -->
+                    <optgroup label="Prior Enlisted Officers">
+                        <option value="O-1E">O-1E</option>
+                        <option value="O-2E">O-2E</option>
+                        <option value="O-3E">O-3E</option>
+                    </optgroup>
+                    <!-- Commissioned Officers -->
+                    <optgroup label="Commissioned Officers">
+                        <option value="O-1">O-1</option>
+                        <option value="O-2">O-2</option>
+                        <option value="O-3">O-3</option>
+                        <option value="O-4">O-4</option>
+                        <option value="O-5">O-5</option>
+                        <option value="O-6">O-6</option>
+                    </optgroup>
                 </select>
             </div>
 
@@ -324,6 +342,20 @@
         "E-7": { "2_or_less": 4328.50, "over_2": 4725.20, "over_3": 4908.10, "over_4": 5142.30, "over_6": 5334.40, "over_8": 5658.20, "over_10": 5842.10, "over_12": 6155.30, "default": 6155.30 },
         "E-8": { "2_or_less": 5449.50, "over_2": 5690.70, "over_3": 5839.80, "over_4": 6018.60, "over_6": 6212.10, "over_8": 6561.90, "over_10": 6739.20, "over_12": 7040.70, "over_14": 7207.80, "default": 7207.80 },
         "E-9": { "2_or_less": 6657.30, "over_2": 6807.90, "over_3": 6997.80, "over_4": 7221.60, "over_6": 7447.80, "over_8": 7808.40, "over_10": 8114.70, "over_12": 8436.00, "default": 8436.00 },
+        
+        // Chief Warrant Officers
+        "W-1": { "2_or_less": 3935.40, "over_2": 4277.40, "over_3": 4390.20, "over_4": 4635.60, "over_6": 4920.30, "over_8": 5313.30, "over_10": 5510.10, "over_12": 5784.60, "over_14": 6055.20, "default": 6055.20 },
+        "W-2": { "2_or_less": 4483.50, "over_2": 4913.40, "over_3": 5040.60, "over_4": 5117.10, "over_6": 5400.00, "over_8": 5851.80, "over_10": 6075.30, "over_12": 6291.60, "over_14": 6554.40, "over_16": 6766.20, "over_18": 6955.50, "default": 6955.50 },
+        "W-3": { "2_or_less": 5067.30, "over_2": 5280.90, "over_3": 5497.80, "over_4": 5567.40, "over_6": 5796.00, "over_8": 6245.70, "over_10": 6712.50, "over_12": 6927.90, "over_14": 7175.70, "over_16": 7427.70, "over_18": 7837.20, "default": 7837.20 },
+        "W-4": { "2_or_less": 5553.00, "over_2": 5913.60, "over_3": 6092.40, "over_4": 6265.50, "over_6": 6549.90, "over_8": 6988.50, "over_10": 7225.80, "over_12": 7654.80, "over_14": 8038.20, "over_16": 8408.10, "over_18": 8704.80, "over_20": 9132.30, "default": 9132.30 },
+        "W-5": { "over_20": 9885.60, "default": 9885.60 },
+
+        // Prior Enlisted Officers
+        "O-1E": { "over_4": 5222.40, "over_6": 5510.70, "over_8": 5781.30, "over_10": 6055.20, "over_12": 6325.20, "over_14": 6654.30, "default": 6654.30 },
+        "O-2E": { "over_4": 6484.50, "over_6": 6614.70, "over_8": 6924.90, "over_10": 7430.70, "over_12": 7724.70, "over_14": 7949.70, "default": 7949.70 },
+        "O-3E": { "over_4": 7382.70, "over_6": 7737.00, "over_8": 8125.50, "over_10": 8375.70, "over_12": 8785.80, "over_14": 9253.20, "over_16": 9467.40, "over_18": 9892.20, "default": 9892.20 },
+
+        // Commissioned Officers
         "O-1": { "2_or_less": 4150.20, "over_2": 4320.00, "over_3": 5222.40, "default": 5222.40 },
         "O-2": { "2_or_less": 4782.00, "over_2": 5446.20, "over_3": 6272.40, "over_4": 6484.50, "default": 6484.50 },
         "O-3": { "2_or_less": 5534.10, "over_2": 6273.90, "over_3": 6770.40, "over_4": 7382.70, "over_6": 7737.00, "over_8": 8125.50, "over_10": 8375.70, "default": 8375.70 },
@@ -404,6 +436,8 @@
             if (payTable[paygrade][yos] !== undefined) {
                 monthlyBasePay = payTable[paygrade][yos];
             } else {
+                // If a precise year of service benchmark isn't specifically stored for that grade,
+                // fall back to the maximum cap limit ("default") for that tier
                 monthlyBasePay = payTable[paygrade]["default"];
             }
         }
